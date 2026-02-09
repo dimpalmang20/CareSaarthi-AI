@@ -1,0 +1,103 @@
+Build a full-stack Agentic AI Pharmacy Web App called "MedAgent AI".
+
+Tech Stack:
+Frontend: React + Tailwind
+Backend: FastAPI (Python)
+Database: Supabase PostgreSQL + Supabase Storage
+AI Model: Groq Llama3 API
+Observability: LangSmith tracing
+
+The app must be built using modular architecture.
+
+========================
+CORE FEATURES
+========================
+
+AUTHENTICATION:
+- User register/login using Supabase auth.
+- Store name, email, phone, address.
+
+DATABASE TABLES:
+users
+medicines
+orders
+refill_alerts
+prescriptions
+
+CSV UPLOAD FEATURE:
+Admin can upload:
+- medicines.csv
+- order_history.csv
+Parse CSV and insert into database.
+
+========================
+AI CHAT + VOICE
+========================
+Create chatbot page.
+
+User can:
+- Type message
+- Speak via microphone (Web Speech API)
+
+AI must extract:
+- medicine name
+- quantity
+- intent (order/refill/check)
+
+Use Groq Llama3 API.
+
+========================
+SAFETY ENGINE
+========================
+Before placing order:
+Check:
+- medicine exists in DB
+- stock > 0
+- if prescription_required = Yes → check prescription uploaded.
+
+If not uploaded → ask user to upload prescription file.
+
+========================
+CART + ORDER FLOW
+========================
+Add to cart → Order summary page.
+
+MOCK PAYMENT PAGE:
+Fake payment success button.
+
+========================
+AGENT ACTIONS AFTER PAYMENT
+========================
+Automatically:
+1) Save order in DB
+2) Reduce stock
+3) Call webhook POST /warehouse/dispatch
+4) Return confirmation message
+
+Create webhook endpoint printing:
+"Warehouse dispatch triggered"
+
+========================
+REFILL PREDICTION AGENT
+========================
+Background job:
+Check order history.
+If user bought medicine X days ago → create refill alert.
+
+========================
+ADMIN DASHBOARD
+========================
+Show:
+- Medicines stock table
+- Orders list
+- Refill alerts
+
+========================
+LANGSMITH TRACING
+========================
+Add tracing for:
+Conversation agent
+Safety agent
+Action agent
+
+Generate project folder structure and starter code.
