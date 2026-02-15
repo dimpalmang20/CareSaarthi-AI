@@ -8,27 +8,21 @@ interface CartItem {
 }
 
 interface AppContextType {
-  user: User | null;
-  medicines: Medicine[];
-  cart: CartItem[];
-  orders: Order[];
-  alerts: RefillAlert[];
-  isLoading: boolean;
-  login: (email: string, role: 'user' | 'admin') => Promise<void>;
+  user: any;
+  setUser: React.Dispatch<React.SetStateAction<any>>;
   logout: () => void;
-  addToCart: (medicineId: string, quantity?: number) => void;
-  removeFromCart: (medicineId: string) => void;
-  clearCart: () => void;
-  placeOrder: () => Promise<void>;
-  addMedicinesFromCSV: (data: any[]) => void;
-  processAIMessage: (message: string) => Promise<{ text: string, action?: string }>;
-  checkPrescription: (file: File) => Promise<boolean>;
+  isLoading: boolean;
 }
+
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+const [user, setUser] = useState<User | null>(() => {
+  const saved = localStorage.getItem("user");
+  return saved ? JSON.parse(saved) : null;
+});
+
   const [medicines, setMedicines] = useState<Medicine[]>(INITIAL_MEDICINES);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -37,39 +31,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
 
   // Simulate Refill Prediction Agent on mount/login
-  useEffect(() => {
-    if (user && user.role === 'user') {
-      // Mock alert generation logic
-      const mockAlert: RefillAlert = {
-        id: 'alert-1',
-        userId: user.id,
-        medicineId: '2',
-        medicineName: 'Lisinopril 10mg',
-        daysRemaining: 3,
-        dismissed: false
-      };
-      setAlerts([mockAlert]);
-    } else {
-      setAlerts([]);
-    }
-  }, [user]);
+  
 
-  const login = async (email: string, role: 'user' | 'admin') => {
-    setIsLoading(true);
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    if (role === 'admin') {
-      setUser(MOCK_ADMIN);
-    } else {
-      setUser(MOCK_USER);
-    }
-    setIsLoading(false);
-    toast({
-      title: "Welcome back",
-      description: `Logged in as ${role === 'admin' ? 'Administrator' : 'User'}`,
-    });
-  };
+
 
   const logout = () => {
     setUser(null);
@@ -222,23 +186,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AppContext.Provider value={{
-      user,
-      medicines,
-      cart,
-      orders,
-      alerts,
-      isLoading,
-      login,
-      logout,
-      addToCart,
-      removeFromCart,
-      clearCart,
-      placeOrder,
-      addMedicinesFromCSV,
-      processAIMessage,
-      checkPrescription
-    }}>
+  <AppContext.Provider value={{
+  user,
+  setUser,
+  logout,
+  isLoading
+}}>
+
       {children}
     </AppContext.Provider>
   );
